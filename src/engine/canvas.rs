@@ -14,7 +14,7 @@ impl Canvas {
         Self {
             width,
             height,
-            buffer: vec![Color::new(0f32, 0f32, 0f32); width * height],
+            buffer: vec![Color::new(0.0, 0.0, 0.0); width * height],
         }
     }
 

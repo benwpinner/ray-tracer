@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign};
 
+use approx::AbsDiffEq;
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Color {
     pub r: f32,
@@ -74,5 +76,23 @@ impl MulAssign<Self> for Color {
         self.r = self.r * rhs.r;
         self.g = self.g * rhs.g;
         self.b = self.b * rhs.b;
+    }
+}
+
+impl AbsDiffEq for Color {
+    type Epsilon = f32;
+
+    fn default_epsilon() -> f32 {
+        1e-5
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f32) -> bool {
+        if !f32::abs_diff_eq(&self.r, &other.r, epsilon)
+            || !f32::abs_diff_eq(&self.g, &other.g, epsilon)
+            || !f32::abs_diff_eq(&self.b, &other.b, epsilon)
+        {
+            return false;
+        }
+        true
     }
 }

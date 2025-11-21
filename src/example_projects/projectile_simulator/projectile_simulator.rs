@@ -1,8 +1,10 @@
+use std::io::Result;
+
 use ray_tracer_rs::engine::{canvas::Canvas, color::Color, maths::tuple::Tuple};
 
 use crate::{
     example_projects::projectile_simulator::projectile::Projectile,
-    ppm_renderer::{self, renderer::PpmRenderer},
+    ppm_renderer::renderer::PpmRenderer,
 };
 
 pub struct ProjectileSimulator {
@@ -19,17 +21,17 @@ impl ProjectileSimulator {
         Self {
             gravity,
             wind,
-            projectile,
-            path: vec![projectile.pos],
+            projectile: projectile.clone(),
+            path: vec![projectile.pos.clone()],
             min_bounds: [projectile.pos[0], projectile.pos[1]],
             max_bounds: [projectile.pos[0], projectile.pos[1]],
         }
     }
 
     pub fn tick(&mut self) {
-        self.projectile.pos += self.projectile.vel;
-        self.projectile.vel += self.gravity + self.wind;
-        self.path.push(self.projectile.pos);
+        self.projectile.pos += self.projectile.vel.clone();
+        self.projectile.vel += self.gravity.clone() + self.wind.clone();
+        self.path.push(self.projectile.pos.clone());
         if self.projectile.pos[0] < self.min_bounds[0] {
             self.min_bounds[0] = self.projectile.pos[0];
         } else if self.projectile.pos[0] > self.min_bounds[0] {
@@ -38,14 +40,12 @@ impl ProjectileSimulator {
 
         if self.projectile.pos[1] < self.min_bounds[1] {
             self.min_bounds[1] = self.projectile.pos[1];
-            println!("MINB {} {}", self.projectile.pos[1], self.min_bounds[1]);
         } else if self.projectile.pos[1] > self.max_bounds[1] {
             self.max_bounds[1] = self.projectile.pos[1];
-            println!("MAXB {} {}", self.projectile.pos[1], self.max_bounds[1]);
         }
     }
 
-    pub fn render(&mut self) {
+    pub fn render(&mut self) -> Result<()> {
         let mut canvas = Canvas::new(300, 300);
         let height = self.max_bounds[1] - self.min_bounds[1];
         let width = self.max_bounds[0] - self.min_bounds[0];
@@ -58,7 +58,6 @@ impl ProjectileSimulator {
         let mut shift_y = 10.0;
         if self.min_bounds[0] < 0.0 {
             shift_x -= self.min_bounds[0];
-            // println!("{shift_x}");
         }
         if self.min_bounds[1] < 0.0 {
             shift_y -= self.min_bounds[1];
@@ -67,9 +66,6 @@ impl ProjectileSimulator {
         for point in &self.path {
             let x = point[0] * ratio;
             let y = (point[1] * ratio).round();
-            // println!("UNSHIFTED {} {} {} {}", point[1], ratio, y, shift_y);
-            // println!("SHIFTED {}", y + shift_y);
-            // println!("RATIO {}, {}", x, (point[1] * ratio).round());
             let shifted_x = (x + shift_x).round() as usize;
             let shifted_y = canvas.height - (y - shift_y) as usize;
             if shifted_x > 0
@@ -81,6 +77,6 @@ impl ProjectileSimulator {
             }
         }
         let ppm_renderer = PpmRenderer::from(&canvas);
-        ppm_renderer.render();
+        ppm_renderer.render()
     }
 }

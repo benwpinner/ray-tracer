@@ -1,6 +1,6 @@
 use ray_tracer_rs::engine::maths::tuple::Tuple;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Projectile {
     pub pos: Tuple,
     pub vel: Tuple,

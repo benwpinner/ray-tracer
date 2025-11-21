@@ -1,19 +1,37 @@
 use std::ops::{Add, AddAssign, Deref, DerefMut, Mul, MulAssign, Sub, SubAssign};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Tuple([f64; 4]);
+use approx::AbsDiffEq;
+
+#[derive(Debug, PartialEq, Clone)]
+pub struct Tuple(pub Vec<f64>);
 
 impl Tuple {
     pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
-        Self([x, y, z, w])
+        Self(vec![x, y, z, w])
     }
 
     pub fn new_point(x: f64, y: f64, z: f64) -> Self {
-        Self([x, y, z, 1.0])
+        Self(vec![x, y, z, 1.0])
     }
 
     pub fn new_vector(x: f64, y: f64, z: f64) -> Self {
-        Self([x, y, z, 0.0])
+        Self(vec![x, y, z, 0.0])
+    }
+
+    pub fn x(&self) -> f64 {
+        self[0]
+    }
+
+    pub fn y(&self) -> f64 {
+        self[1]
+    }
+
+    pub fn z(&self) -> f64 {
+        self[2]
+    }
+
+    pub fn w(&self) -> f64 {
+        self[3]
     }
 
     pub fn negate(&mut self) {
@@ -54,7 +72,7 @@ impl Add<Self> for Tuple {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self([
+        Self(vec![
             self[0] + rhs[0],
             self[1] + rhs[1],
             self[2] + rhs[2],
@@ -76,7 +94,7 @@ impl Sub<Self> for Tuple {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self([
+        Self(vec![
             self[0] - rhs[0],
             self[1] - rhs[1],
             self[2] - rhs[2],
@@ -98,7 +116,12 @@ impl Mul<f64> for Tuple {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        Tuple([self[0] * rhs, self[1] * rhs, self[2] * rhs, self[3] * rhs])
+        Tuple(vec![
+            self[0] * rhs,
+            self[1] * rhs,
+            self[2] * rhs,
+            self[3] * rhs,
+        ])
     }
 }
 
@@ -111,24 +134,8 @@ impl MulAssign<f64> for Tuple {
     }
 }
 
-// impl Mul<Self> for Color {
-//     type Output = Self;
-
-//     fn mul(self, rhs: Self) -> Self::Output {
-//         Color::new(self.r * rhs.r, self.g * rhs.g, self.b * rhs.b)
-//     }
-// }
-
-// impl MulAssign<Self> for Color {
-//     fn mul_assign(&mut self, rhs: Self) {
-//         self.r = self.r * rhs.r;
-//         self.g = self.g * rhs.g;
-//         self.b = self.b * rhs.b;
-//     }
-// }
-
 impl Deref for Tuple {
-    type Target = [f64; 4];
+    type Target = Vec<f64>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -138,5 +145,22 @@ impl Deref for Tuple {
 impl DerefMut for Tuple {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl AbsDiffEq for Tuple {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> f64 {
+        1e-5
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: f64) -> bool {
+        for i in 0..self.len() {
+            if !f64::abs_diff_eq(&self[i], &other[i], epsilon) {
+                return false;
+            }
+        }
+        true
     }
 }
