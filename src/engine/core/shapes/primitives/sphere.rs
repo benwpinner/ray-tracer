@@ -9,7 +9,7 @@ use crate::engine::{
 pub struct Sphere {
     pub id: i32,
     pub r: f64,
-    pub transform: Matrix,
+    pub transform: Matrix<4>,
 }
 
 impl Sphere {
@@ -17,7 +17,7 @@ impl Sphere {
         Self {
             id,
             r,
-            transform: Matrix::identity(),
+            transform: Matrix::<4>::identity(),
         }
     }
 
@@ -25,12 +25,12 @@ impl Sphere {
     // a = 1 as a = D . D, D should be a normalized vector so the dot product should be 1
     // b = 2D . (O - C)
     // c = ((O - C) . (O - C)) -
-    fn _ray_discriminant(&self, ray: Ray) -> Result<f64, String> {
-        let transformed_ray = ray.transform(&self.transform.inverse()?);
-        let sphere_to_ray = transformed_ray.origin;
-        let a = Tuple::dot_product(&transformed_ray.direction, &transformed_ray.direction);
-        let b = 2.0 * Tuple::dot_product(&transformed_ray.direction, &sphere_to_ray);
-        let c = Tuple::dot_product(&sphere_to_ray, &sphere_to_ray) - (self.r * self.r);
+    fn _ray_discriminant(&self, ray: &mut Ray) -> Result<f64, String> {
+        ray.transform(&self.transform.inverse()?);
+        let sphere_to_ray = &ray.origin;
+        let a = Tuple::dot_product(&ray.direction, &ray.direction);
+        let b = 2.0 * Tuple::dot_product(&ray.direction, sphere_to_ray);
+        let c = Tuple::dot_product(sphere_to_ray, sphere_to_ray) - (self.r * self.r);
         Ok((b * b) - (4.0 * a * c))
     }
 
@@ -40,11 +40,11 @@ impl Sphere {
 }
 
 impl Shape for Sphere {
-    fn intersect(&self, ray: Ray) -> Result<Vec<Intersection>, String> {
-        let transformed_ray = ray.transform(&self.transform.inverse()?);
-        let sphere_to_ray = transformed_ray.origin - Tuple::new_point(0.0, 0.0, 0.0);
-        let a = Tuple::dot_product(&transformed_ray.direction, &transformed_ray.direction);
-        let b = 2.0 * Tuple::dot_product(&transformed_ray.direction, &sphere_to_ray);
+    fn intersect(&self, ray: &mut Ray) -> Result<Vec<Intersection>, String> {
+        ray.transform(&self.transform.inverse()?);
+        let sphere_to_ray = ray.origin - Tuple::new_point(0.0, 0.0, 0.0);
+        let a = Tuple::dot_product(&ray.direction, &ray.direction);
+        let b = 2.0 * Tuple::dot_product(&ray.direction, &sphere_to_ray);
         let c = Tuple::dot_product(&sphere_to_ray, &sphere_to_ray) - (self.r * self.r);
         let discriminant = self.discriminant(a, b, c);
         if discriminant > 0.0 {
@@ -58,7 +58,7 @@ impl Shape for Sphere {
         Ok(vec![])
     }
 
-    fn set_transform(&mut self, transform_matrix: &Matrix) {
-        self.transform = self.transform.clone() * transform_matrix.clone();
+    fn set_transform(&mut self, transform_matrix: &Matrix<4>) {
+        self.transform = &self.transform * transform_matrix;
     }
 }

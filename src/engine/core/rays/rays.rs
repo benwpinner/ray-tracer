@@ -11,13 +11,11 @@ impl Ray {
     }
 
     pub fn position(&self, t: f64) -> Tuple {
-        self.origin.clone() + (self.direction.clone() * t)
+        &self.origin + &&(self.direction * t)
     }
 
-    pub fn transform(&self, transform_matrix: &Matrix) -> Self {
-        Self {
-            origin: transform_matrix.clone() * self.origin.clone(),
-            direction: transform_matrix.clone() * self.direction.clone(),
-        }
+    pub fn transform(&mut self, transform_matrix: &Matrix<4>) {
+        self.origin = transform_matrix * &self.origin;
+        self.direction = transform_matrix * &self.direction;
     }
 }

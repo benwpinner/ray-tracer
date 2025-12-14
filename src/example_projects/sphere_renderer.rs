@@ -20,7 +20,10 @@ impl SphereRender {
     pub fn new() -> Self {
         Self {
             sphere: Sphere::new(1, 1.0),
-            camera: Camera::new(Matrix::translation(0.0, 0.0, 5.0), Canvas::new(1920, 1080)),
+            camera: Camera::new(
+                Matrix::<4>::translation(0.0, 0.0, 5.0),
+                Canvas::new(1920, 1080),
+            ),
         }
     }
 
@@ -28,8 +31,8 @@ impl SphereRender {
         for x in 0..self.camera.canvas.width {
             for y in 0..self.camera.canvas.height {
                 println!("X {}, Y {}", x, y);
-                let ray = self.camera.get_ray(x, y);
-                match Intersection::hit(self.sphere.intersect(ray)?.iter().collect()) {
+                let mut ray = self.camera.get_ray(x, y);
+                match Intersection::hit(self.sphere.intersect(&mut ray)?.iter().collect()) {
                     Some(_) => self
                         .camera
                         .canvas

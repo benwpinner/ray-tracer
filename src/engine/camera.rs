@@ -5,12 +5,12 @@ use crate::engine::{
 };
 
 pub struct Camera {
-    pub transform: Matrix,
+    pub transform: Matrix<4>,
     pub canvas: Canvas,
 }
 
 impl Camera {
-    pub fn new(transform: Matrix, canvas: Canvas) -> Self {
+    pub fn new(transform: Matrix<4>, canvas: Canvas) -> Self {
         Self { transform, canvas }
     }
 
@@ -24,7 +24,8 @@ impl Camera {
         );
         let mut eye_to_pixel = pixel_pos - Tuple::new_point(0.0, 0.0, 0.0);
         eye_to_pixel.normalize();
-        let ray = Ray::new(Tuple::new_point(0.0, 0.0, 0.0), eye_to_pixel);
-        ray.transform(&self.transform)
+        let mut ray = Ray::new(Tuple::new_point(0.0, 0.0, 0.0), eye_to_pixel);
+        ray.transform(&self.transform);
+        ray
     }
 }

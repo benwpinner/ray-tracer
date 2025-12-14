@@ -4,6 +4,6 @@ use crate::engine::{
 };
 
 pub trait Shape {
-    fn intersect(&self, ray: Ray) -> Result<Vec<Intersection>, String>;
-    fn set_transform(&mut self, transform_matrix: &Matrix);
+    fn intersect(&self, ray: &mut Ray) -> Result<Vec<Intersection>, String>;
+    fn set_transform(&mut self, transform_matrix: &Matrix<4>);
 }
