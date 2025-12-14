@@ -29,6 +29,14 @@ impl Canvas {
     pub fn fill(self: &mut Self, color: Color) {
         self.buffer = (0..self.width * self.height).map(|_i| color).collect();
     }
+
+    pub fn aspect_ratio(&self) -> f64 {
+        self.height as f64 / self.width as f64
+    }
+
+    pub fn pixel_size(&self) -> f64 {
+        2.0 / self.height as f64
+    }
 }
 
 impl Display for Canvas {
