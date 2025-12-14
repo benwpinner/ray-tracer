@@ -87,7 +87,7 @@ fn multiplying_matrix_by_identity() {
         [0.0, 0.0, 0.0, 1.0],
     ]);
     let identity_matrix = Matrix::<4>::identity();
-    let result = matrix.clone() * identity_matrix;
+    let result = matrix * identity_matrix;
     assert_eq!(matrix, result);
 }
 
@@ -233,7 +233,7 @@ fn inverse_of_4x4_matrix_3() -> Result<(), String> {
         [7.0, 0.0, 5.0, 4.0],
         [6.0, -2.0, 0.0, 5.0],
     ]);
-    let result = matrix.clone() * matrix2.clone();
+    let result = matrix * matrix2;
     let inverse = matrix2.inverse()?;
     assert_abs_diff_eq!(matrix, result * inverse);
     Ok(())
@@ -260,7 +260,7 @@ fn translate_point_via_inverse_matrix_multiplication() -> Result<(), String> {
 fn vector_not_translated_via_matrix_multiplication() {
     let transform_matrix = Matrix::<4>::translation(5.0, -3.0, 2.0);
     let vector = Tuple::new_vector(-3.0, 4.0, 5.0);
-    assert_abs_diff_eq!(vector, transform_matrix * vector.clone());
+    assert_abs_diff_eq!(vector, transform_matrix * vector);
 }
 
 #[test]
@@ -270,8 +270,8 @@ fn point_and_vector_scaled_via_matrix_multiplication() {
     let vector = Tuple::new_vector(-4.0, 6.0, 8.0);
     let expected_point = Tuple::new_point(-8.0, 18.0, 32.0);
     let expected_vector = Tuple::new_vector(-8.0, 18.0, 32.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point);
-    assert_abs_diff_eq!(expected_vector, transform_matrix.clone() * vector);
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
+    assert_abs_diff_eq!(expected_vector, transform_matrix * vector);
 }
 
 #[test]
@@ -281,8 +281,8 @@ fn point_and_vector_scaled_via_inverse_matrix_multiplication() -> Result<(), Str
     let vector = Tuple::new_vector(-4.0, 6.0, 8.0);
     let expected_point = Tuple::new_point(-2.0, 2.0, 2.0);
     let expected_vector = Tuple::new_vector(-2.0, 2.0, 2.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point);
-    assert_abs_diff_eq!(expected_vector, transform_matrix.clone() * vector);
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
+    assert_abs_diff_eq!(expected_vector, transform_matrix * vector);
     Ok(())
 }
 
@@ -291,7 +291,7 @@ fn point_reflected_via_matrix_multiplication() -> Result<(), String> {
     let transform_matrix = Matrix::<4>::scaling(-2.0, 3.0, 4.0);
     let point = Tuple::new_point(2.0, 6.0, 8.0);
     let expected_point = Tuple::new_point(-4.0, 18.0, 32.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point);
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
     Ok(())
 }
 
@@ -303,8 +303,8 @@ fn point_rotated_around_x_via_matrix_multiplication() -> Result<(), String> {
     let expected_point1 = Tuple::new_point(0.0, f64::sqrt(2.0) / 2.0, f64::sqrt(2.0) / 2.0);
     let expected_point2 = Tuple::new_point(0.0, 0.0, 1.0);
     let expected_point3 = Tuple::new_point(0.0, f64::sqrt(2.0) / 2.0, -f64::sqrt(2.0) / 2.0);
-    assert_abs_diff_eq!(expected_point1, transform_matrix1.clone() * point.clone());
-    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point.clone());
+    assert_abs_diff_eq!(expected_point1, transform_matrix1 * point);
+    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point);
     assert_abs_diff_eq!(expected_point3, transform_matrix1.inverse()? * point);
     Ok(())
 }
@@ -317,8 +317,8 @@ fn point_rotated_around_y_via_matrix_multiplication() -> Result<(), String> {
     let expected_point1 = Tuple::new_point(f64::sqrt(2.0) / 2.0, 0.0, f64::sqrt(2.0) / 2.0);
     let expected_point2 = Tuple::new_point(1.0, 0.0, 0.0);
     let expected_point3 = Tuple::new_point(-f64::sqrt(2.0) / 2.0, 0.0, f64::sqrt(2.0) / 2.0);
-    assert_abs_diff_eq!(expected_point1, transform_matrix1.clone() * point.clone());
-    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point.clone());
+    assert_abs_diff_eq!(expected_point1, transform_matrix1 * point);
+    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point);
     assert_abs_diff_eq!(expected_point3, transform_matrix1.inverse()? * point);
     Ok(())
 }
@@ -331,8 +331,8 @@ fn point_rotated_around_z_via_matrix_multiplication() -> Result<(), String> {
     let expected_point1 = Tuple::new_point(-f64::sqrt(2.0) / 2.0, f64::sqrt(2.0) / 2.0, 0.0);
     let expected_point2 = Tuple::new_point(-1.0, 0.0, 0.0);
     let expected_point3 = Tuple::new_point(f64::sqrt(2.0) / 2.0, f64::sqrt(2.0) / 2.0, 0.0);
-    assert_abs_diff_eq!(expected_point1, transform_matrix1.clone() * point.clone());
-    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point.clone());
+    assert_abs_diff_eq!(expected_point1, transform_matrix1 * point);
+    assert_abs_diff_eq!(expected_point2, transform_matrix2 * point);
     assert_abs_diff_eq!(expected_point3, transform_matrix1.inverse()? * point);
     Ok(())
 }
@@ -342,7 +342,7 @@ fn point_sheared_in_x_by_y() {
     let transform_matrix = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(5.0, 3.0, 4.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -350,7 +350,7 @@ fn point_sheared_in_x_by_z() {
     let transform_matrix = Matrix::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(6.0, 3.0, 4.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -358,7 +358,7 @@ fn point_sheared_in_y_by_x() {
     let transform_matrix = Matrix::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(2.0, 5.0, 4.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -366,7 +366,7 @@ fn point_sheared_in_y_by_z() {
     let transform_matrix = Matrix::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(2.0, 7.0, 4.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -374,7 +374,7 @@ fn point_sheared_in_z_by_x() {
     let transform_matrix = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(2.0, 3.0, 6.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -382,7 +382,7 @@ fn point_sheared_in_z_by_y() {
     let transform_matrix = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
     let point = Tuple::new_point(2.0, 3.0, 4.0);
     let expected_point = Tuple::new_point(2.0, 3.0, 7.0);
-    assert_abs_diff_eq!(expected_point, transform_matrix.clone() * point.clone());
+    assert_abs_diff_eq!(expected_point, transform_matrix * point);
 }
 
 #[test]
@@ -395,7 +395,7 @@ fn individual_transformations_performed_in_sequence() -> Result<(), String> {
     point = scaling_matrix * point;
     point = translation_matrix * point;
     let expected_point = Tuple::new_point(15.0, 0.0, 7.0);
-    assert_abs_diff_eq!(expected_point, point.clone());
+    assert_abs_diff_eq!(expected_point, point);
     Ok(())
 }
 
@@ -407,7 +407,7 @@ fn chained_transformations_performed_in_reverse_order() -> Result<(), String> {
     let mut point = Tuple::new_point(1.0, 0.0, 1.0);
     point = (translation_matrix * scaling_matrix * rotation_matrix) * point;
     let expected_point = Tuple::new_point(15.0, 0.0, 7.0);
-    assert_abs_diff_eq!(expected_point, point.clone());
+    assert_abs_diff_eq!(expected_point, point);
     Ok(())
 }
 

@@ -21,8 +21,8 @@ impl SphereRender {
         Self {
             sphere: Sphere::new(1, 1.0),
             camera: Camera::new(
-                Matrix::<4>::translation(0.0, 0.0, 5.0),
-                Canvas::new(1920, 1080),
+                Matrix::<4>::translation(0.0, 0.0, 2.0),
+                Canvas::new(500, 500),
             ),
         }
     }
