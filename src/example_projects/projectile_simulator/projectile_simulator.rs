@@ -77,6 +77,6 @@ impl ProjectileSimulator {
             }
         }
         let ppm_renderer = PpmRenderer::from(&canvas);
-        ppm_renderer.render()
+        ppm_renderer.render("projectile.ppm")
     }
 }

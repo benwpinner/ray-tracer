@@ -3,7 +3,7 @@ use std::{
     io::{Result, Write},
 };
 
-use ray_tracer_rs::engine::canvas::Canvas;
+use ray_tracer_rs::engine::{canvas::Canvas, color::Color};
 
 pub struct PpmRenderer {
     width: usize,
@@ -12,7 +12,7 @@ pub struct PpmRenderer {
 }
 
 impl PpmRenderer {
-    pub fn render(&self) -> Result<()> {
+    pub fn render(&self, filename: &str) -> Result<()> {
         let mut ppm = "P3".to_string();
         ppm += format!("\n{} {}", self.width, self.height).as_str();
         ppm += format!("\n255").as_str();
@@ -32,7 +32,7 @@ impl PpmRenderer {
                 }
             }
         }
-        let mut file = File::create("ben.ppm")?;
+        let mut file = File::create(filename)?;
         file.write_all(ppm.as_bytes())?;
         Ok(())
     }
