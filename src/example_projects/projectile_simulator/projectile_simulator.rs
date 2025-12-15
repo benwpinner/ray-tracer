@@ -21,17 +21,17 @@ impl ProjectileSimulator {
         Self {
             gravity,
             wind,
-            projectile: projectile.clone(),
-            path: vec![projectile.pos.clone()],
             min_bounds: [projectile.pos[0], projectile.pos[1]],
             max_bounds: [projectile.pos[0], projectile.pos[1]],
+            path: vec![projectile.pos],
+            projectile: projectile,
         }
     }
 
     pub fn tick(&mut self) {
-        self.projectile.pos += self.projectile.vel.clone();
-        self.projectile.vel += self.gravity.clone() + self.wind.clone();
-        self.path.push(self.projectile.pos.clone());
+        self.projectile.pos += self.projectile.vel;
+        self.projectile.vel += self.gravity + self.wind;
+        self.path.push(self.projectile.pos);
         if self.projectile.pos[0] < self.min_bounds[0] {
             self.min_bounds[0] = self.projectile.pos[0];
         } else if self.projectile.pos[0] > self.min_bounds[0] {

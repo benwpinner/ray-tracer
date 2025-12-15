@@ -19,10 +19,10 @@ impl Clock {
 
     pub fn populate_notches(&mut self) {
         let mut point = Tuple::new_point(0.0, 1.0, 0.0);
-        self.notches.push(point.clone());
+        self.notches.push(point);
         for _is_pivot_zero in 0..11 {
-            point = Matrix::rotation_z(PI / 6.0) * point.clone();
-            self.notches.push(point.clone());
+            point = Matrix::rotation_z(PI / 6.0) * point;
+            self.notches.push(point);
         }
     }
 
@@ -30,7 +30,7 @@ impl Clock {
         let mut canvas = Canvas::new(300, 300);
         canvas.fill(Color::new(0.0, 0.0, 0.0));
         for point in &self.notches {
-            let shifted_point = point.clone() * 140.0;
+            let shifted_point = point * 140.0;
             canvas.write_pixel(
                 (shifted_point.x() + 150.0).round() as usize,
                 (shifted_point.y() + 150.0).round() as usize,

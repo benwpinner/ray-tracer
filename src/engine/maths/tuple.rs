@@ -2,20 +2,20 @@ use std::ops::{Add, AddAssign, Deref, DerefMut, Mul, MulAssign, Sub, SubAssign};
 
 use approx::AbsDiffEq;
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Tuple(pub Vec<f64>);
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Tuple(pub [f64; 4]);
 
 impl Tuple {
     pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
-        Self(vec![x, y, z, w])
+        Self([x, y, z, w])
     }
 
     pub fn new_point(x: f64, y: f64, z: f64) -> Self {
-        Self(vec![x, y, z, 1.0])
+        Self([x, y, z, 1.0])
     }
 
     pub fn new_vector(x: f64, y: f64, z: f64) -> Self {
-        Self(vec![x, y, z, 0.0])
+        Self([x, y, z, 0.0])
     }
 
     pub fn x(&self) -> f64 {
@@ -72,12 +72,25 @@ impl Add<Self> for Tuple {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self(vec![
+        Self([
             self[0] + rhs[0],
             self[1] + rhs[1],
             self[2] + rhs[2],
             self[3] + rhs[3],
         ])
+    }
+}
+
+impl Add<&Self> for &Tuple {
+    type Output = Tuple;
+
+    fn add(self, rhs: &Self) -> Self::Output {
+        Tuple::new(
+            self[0] + rhs[0],
+            self[1] + rhs[1],
+            self[2] + rhs[2],
+            self[3] + rhs[3],
+        )
     }
 }
 
@@ -94,7 +107,7 @@ impl Sub<Self> for Tuple {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self(vec![
+        Self([
             self[0] - rhs[0],
             self[1] - rhs[1],
             self[2] - rhs[2],
@@ -116,12 +129,15 @@ impl Mul<f64> for Tuple {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        Tuple(vec![
-            self[0] * rhs,
-            self[1] * rhs,
-            self[2] * rhs,
-            self[3] * rhs,
-        ])
+        Tuple([self[0] * rhs, self[1] * rhs, self[2] * rhs, self[3] * rhs])
+    }
+}
+
+impl Mul<f64> for &Tuple {
+    type Output = Tuple;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Tuple([self[0] * rhs, self[1] * rhs, self[2] * rhs, self[3] * rhs])
     }
 }
 
@@ -135,7 +151,7 @@ impl MulAssign<f64> for Tuple {
 }
 
 impl Deref for Tuple {
-    type Target = Vec<f64>;
+    type Target = [f64; 4];
 
     fn deref(&self) -> &Self::Target {
         &self.0
