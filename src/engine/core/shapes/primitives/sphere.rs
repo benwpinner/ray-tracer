@@ -6,6 +6,7 @@ use crate::engine::{
     maths::{matrix::Matrix, tuple::Tuple},
 };
 
+#[derive(Clone, Copy)]
 pub struct Sphere {
     pub id: i32,
     pub r: f64,

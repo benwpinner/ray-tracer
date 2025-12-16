@@ -38,6 +38,6 @@ impl Clock {
             );
         }
         let ppm_renderer = PpmRenderer::from(&canvas);
-        ppm_renderer.render()
+        ppm_renderer.render("clock.ppm")
     }
 }
